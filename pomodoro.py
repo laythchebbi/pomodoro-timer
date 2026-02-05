@@ -323,48 +323,108 @@ class PomodoroTimer:
         return f"{minutes:02d}:{secs:02d}"
 
     def render_time_display(self, time_str: str, color: str) -> Text:
-        """Render time with animation effects when it changes."""
-        # Animation frames for time change effect
-        change_animations = [
-            ("bold", "▼"),      # Frame 0: Down arrow indicator
-            ("bold", "●"),      # Frame 1: Dot
-            ("bold", ""),       # Frame 2: Clean
-        ]
+        """Render time as big digital clock numbers (Criminal UK style)."""
+        # Digital clock font - each digit is 5 lines tall, 4 chars wide
+        DIGITS = {
+            '0': [
+                "█▀▀█",
+                "█  █",
+                "█  █",
+                "█  █",
+                "█▄▄█",
+            ],
+            '1': [
+                "  ▀█",
+                "   █",
+                "   █",
+                "   █",
+                "   █",
+            ],
+            '2': [
+                "█▀▀█",
+                "   █",
+                "█▀▀▀",
+                "█   ",
+                "█▄▄▄",
+            ],
+            '3': [
+                "█▀▀█",
+                "   █",
+                " ▀▀█",
+                "   █",
+                "█▄▄█",
+            ],
+            '4': [
+                "█  █",
+                "█  █",
+                "▀▀▀█",
+                "   █",
+                "   █",
+            ],
+            '5': [
+                "█▀▀▀",
+                "█   ",
+                "▀▀▀█",
+                "   █",
+                "▄▄▄█",
+            ],
+            '6': [
+                "█▀▀▀",
+                "█   ",
+                "█▀▀█",
+                "█  █",
+                "█▄▄█",
+            ],
+            '7': [
+                "▀▀▀█",
+                "   █",
+                "   █",
+                "   █",
+                "   █",
+            ],
+            '8': [
+                "█▀▀█",
+                "█  █",
+                "█▀▀█",
+                "█  █",
+                "█▄▄█",
+            ],
+            '9': [
+                "█▀▀█",
+                "█  █",
+                "▀▀▀█",
+                "   █",
+                "▄▄▄█",
+            ],
+            ':': [
+                "    ",
+                " ▀▀ ",
+                "    ",
+                " ▀▀ ",
+                "    ",
+            ],
+        }
 
-        # Decorative borders for the time
-        decorations = [
-            ("✧", "✧"),
-            ("◆", "◆"),
-            ("★", "★"),
-            ("◈", "◈"),
-        ]
-
-        # Pick decoration based on animation frame
-        left_dec, right_dec = decorations[self.animation_frame % len(decorations)]
-
-        # Build the time display
+        # Build each line of the big display
         content = Text()
         content.append("\n")
 
-        # Add animation indicator if time just changed
-        if self.time_change_frame > 0:
-            style, indicator = change_animations[min(self.time_change_frame - 1, 2)]
-            if indicator:
-                content.append(f"         {indicator}\n", style=f"{style} {color}")
+        # Render 5 lines of the digital clock
+        for line_idx in range(5):
+            line_parts = []
+            for char in time_str:
+                if char in DIGITS:
+                    line_parts.append(DIGITS[char][line_idx])
+                else:
+                    line_parts.append("    ")
+
+            line = " ".join(line_parts)
+
+            # Add flash effect when time changes
+            if self.time_change_frame > 0 and line_idx == 2:
+                content.append(f"  {line}\n", style=f"bold bright_white")
             else:
-                content.append("\n")
-        else:
-            content.append("\n")
-
-        # Main time display with decorations
-        content.append(f"    {left_dec}  ", style=f"dim {color}")
-        content.append(f" {time_str} ", style=f"bold {color}")
-        content.append(f"  {right_dec}\n", style=f"dim {color}")
-
-        # Underline decoration
-        underline_chars = ["─", "═", "━", "▬"]
-        underline = underline_chars[self.animation_frame % len(underline_chars)]
-        content.append(f"       {underline * 9}\n", style=f"dim {color}")
+                content.append(f"  {line}\n", style=f"bold {color}")
 
         content.append("\n")
         return content
