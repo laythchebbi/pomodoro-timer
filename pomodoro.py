@@ -419,12 +419,7 @@ class PomodoroTimer:
                     line_parts.append("    ")
 
             line = " ".join(line_parts)
-
-            # Add flash effect when time changes
-            if self.time_change_frame > 0 and line_idx == 2:
-                content.append(f"  {line}\n", style=f"bold bright_white")
-            else:
-                content.append(f"  {line}\n", style=f"bold {color}")
+            content.append(f"  {line}\n", style=f"bold {color}")
 
         content.append("\n")
         return content
