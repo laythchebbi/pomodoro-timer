@@ -1,10 +1,10 @@
 # Pomodoro Timer
 
-A beautiful terminal-based Pomodoro Timer with ASCII art, animations, and a modern aesthetic.
+A beautiful terminal-based Pomodoro Timer with animations and a modern aesthetic.
 
 ## Features
 
-- **Large ASCII art timer display** - Easy to read from a distance
+- **Animated timer display** - Clean numbers with animated decorations
 - **Fun progress bar** - Train during work sessions, unicorn during breaks
 - **Ambient animations** - Optional rain or twinkling stars
 - **Break activities** - Stretch exercises for short breaks, fun facts for long breaks
@@ -15,7 +15,7 @@ A beautiful terminal-based Pomodoro Timer with ASCII art, animations, and a mode
 ## Installation
 
 ```bash
-pip install rich pyfiglet
+pip install rich
 ```
 
 ## Usage
@@ -79,23 +79,24 @@ Stretch and smile!
 ## Screenshots
 
 ```
-╭──────────────────────── 🍅 POMODORO ────────────────────────╮
-│                                                              │
-│                        25:00                                 │
-│                   (large ASCII art)                          │
-│                                                              │
-│        ═══════════════🚂🚃─────────────────  45.2%          │
-│                                                              │
-│                    🎯  FOCUS TIME                            │
-│                                                              │
-│                      ● ● ○ ○                                 │
-│                                                              │
-│              "Focus is the new superpower."                  │
-│                                                              │
-│              Today: 2 🍅  •  50m focused                     │
-│                                                              │
-│              P pause   S skip   Q quit                       │
-╰──────────────────────────────────────────────────────────────╯
+╭─────────────────── 🍅 POMODORO ───────────────────╮
+│                                                    │
+│                        ▼                           │
+│               ✧   25:00   ✧                        │
+│                  ─────────                         │
+│                                                    │
+│       ═══════════════🚂🚃─────────────  45.2%     │
+│                                                    │
+│                 🎯  FOCUS TIME                     │
+│                                                    │
+│                   ● ● ○ ○                          │
+│                                                    │
+│          "Focus is the new superpower."            │
+│                                                    │
+│          Today: 2 🍅  •  50m focused               │
+│                                                    │
+│           P pause   S skip   Q quit                │
+╰────────────────────────────────────────────────────╯
 ```
 
 ## License

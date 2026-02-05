@@ -39,7 +39,6 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.align import Align
 from rich import box
-import pyfiglet
 
 
 # Motivational quotes for work sessions
@@ -186,6 +185,10 @@ class PomodoroTimer:
         # Generate ambient animation field (for rain/stars)
         self.ambient_field = self._generate_ambient_field()
 
+        # Track previous time for change animation
+        self.prev_seconds = -1
+        self.time_change_frame = 0
+
     def _generate_ambient_field(self) -> list[list[str]]:
         """Generate a field of ambient characters for animation."""
         width, height = 60, 8
@@ -319,20 +322,61 @@ class PomodoroTimer:
         secs = seconds % 60
         return f"{minutes:02d}:{secs:02d}"
 
-    def render_ascii_time(self, time_str: str) -> str:
-        """Render time as ASCII art."""
-        try:
-            fig = pyfiglet.Figlet(font='colossal', width=200)
-            return fig.renderText(time_str)
-        except Exception:
-            # Fallback to a simpler font
-            fig = pyfiglet.Figlet(font='big', width=200)
-            return fig.renderText(time_str)
+    def render_time_display(self, time_str: str, color: str) -> Text:
+        """Render time with animation effects when it changes."""
+        # Animation frames for time change effect
+        change_animations = [
+            ("bold", "▼"),      # Frame 0: Down arrow indicator
+            ("bold", "●"),      # Frame 1: Dot
+            ("bold", ""),       # Frame 2: Clean
+        ]
+
+        # Decorative borders for the time
+        decorations = [
+            ("✧", "✧"),
+            ("◆", "◆"),
+            ("★", "★"),
+            ("◈", "◈"),
+        ]
+
+        # Pick decoration based on animation frame
+        left_dec, right_dec = decorations[self.animation_frame % len(decorations)]
+
+        # Build the time display
+        content = Text()
+        content.append("\n")
+
+        # Add animation indicator if time just changed
+        if self.time_change_frame > 0:
+            style, indicator = change_animations[min(self.time_change_frame - 1, 2)]
+            if indicator:
+                content.append(f"         {indicator}\n", style=f"{style} {color}")
+            else:
+                content.append("\n")
+        else:
+            content.append("\n")
+
+        # Main time display with decorations
+        content.append(f"    {left_dec}  ", style=f"dim {color}")
+        content.append(f" {time_str} ", style=f"bold {color}")
+        content.append(f"  {right_dec}\n", style=f"dim {color}")
+
+        # Underline decoration
+        underline_chars = ["─", "═", "━", "▬"]
+        underline = underline_chars[self.animation_frame % len(underline_chars)]
+        content.append(f"       {underline * 9}\n", style=f"dim {color}")
+
+        content.append("\n")
+        return content
 
     def create_display(self) -> Panel:
         """Create the timer display panel."""
         time_str = self.format_time(self.remaining_seconds)
-        ascii_time = self.render_ascii_time(time_str)
+
+        # Check if time changed for animation
+        if self.remaining_seconds != self.prev_seconds:
+            self.time_change_frame = 3  # Start animation
+            self.prev_seconds = self.remaining_seconds
 
         # Calculate progress
         progress_pct = ((self.total_seconds - self.remaining_seconds) / self.total_seconds) * 100 if self.total_seconds > 0 else 0
@@ -376,14 +420,8 @@ class PomodoroTimer:
         emoji = self.get_session_emoji()
         session_name = self.get_session_name()
 
-        # Build the display content
-        content = Text()
-
-        # Add ASCII time with color
-        lines = ascii_time.split('\n')
-        for line in lines:
-            if line.strip():
-                content.append(f"  {line}\n", style=f"bold {color}")
+        # Build the time display with animation
+        content = self.render_time_display(time_str, color)
 
         # Status section
         if self.is_paused:
@@ -607,6 +645,9 @@ class PomodoroTimer:
             if animation_tick >= 5:  # Update animation every 0.5 seconds
                 self.animation_frame += 1
                 self._animate_ambient_field()
+                # Decrement time change animation frame
+                if self.time_change_frame > 0:
+                    self.time_change_frame -= 1
                 animation_tick = 0
 
             # Update display
