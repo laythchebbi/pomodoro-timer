@@ -323,105 +323,126 @@ class PomodoroTimer:
         return f"{minutes:02d}:{secs:02d}"
 
     def render_time_display(self, time_str: str, color: str) -> Text:
-        """Render time as big digital clock numbers (Criminal UK style)."""
-        # Digital clock font - each digit is 5 lines tall, 4 chars wide
+        """Render time as 7-segment LED display (Criminal UK interrogation room style)."""
+        # 7-segment LED display - authentic digital clock style
+        # Each digit is 7 lines tall for proper segment proportions
         DIGITS = {
             '0': [
-                "█▀▀█",
-                "█  █",
-                "█  █",
-                "█  █",
-                "█▄▄█",
+                " ████ ",
+                "██  ██",
+                "██  ██",
+                "      ",
+                "██  ██",
+                "██  ██",
+                " ████ ",
             ],
             '1': [
-                "  ▀█",
-                "   █",
-                "   █",
-                "   █",
-                "   █",
+                "    ██",
+                "    ██",
+                "    ██",
+                "      ",
+                "    ██",
+                "    ██",
+                "    ██",
             ],
             '2': [
-                "█▀▀█",
-                "   █",
-                "█▀▀▀",
-                "█   ",
-                "█▄▄▄",
+                " ████ ",
+                "    ██",
+                "    ██",
+                " ████ ",
+                "██    ",
+                "██    ",
+                " ████ ",
             ],
             '3': [
-                "█▀▀█",
-                "   █",
-                " ▀▀█",
-                "   █",
-                "█▄▄█",
+                " ████ ",
+                "    ██",
+                "    ██",
+                " ████ ",
+                "    ██",
+                "    ██",
+                " ████ ",
             ],
             '4': [
-                "█  █",
-                "█  █",
-                "▀▀▀█",
-                "   █",
-                "   █",
+                "██  ██",
+                "██  ██",
+                "██  ██",
+                " ████ ",
+                "    ██",
+                "    ██",
+                "    ██",
             ],
             '5': [
-                "█▀▀▀",
-                "█   ",
-                "▀▀▀█",
-                "   █",
-                "▄▄▄█",
+                " ████ ",
+                "██    ",
+                "██    ",
+                " ████ ",
+                "    ██",
+                "    ██",
+                " ████ ",
             ],
             '6': [
-                "█▀▀▀",
-                "█   ",
-                "█▀▀█",
-                "█  █",
-                "█▄▄█",
+                " ████ ",
+                "██    ",
+                "██    ",
+                " ████ ",
+                "██  ██",
+                "██  ██",
+                " ████ ",
             ],
             '7': [
-                "▀▀▀█",
-                "   █",
-                "   █",
-                "   █",
-                "   █",
+                " ████ ",
+                "    ██",
+                "    ██",
+                "      ",
+                "    ██",
+                "    ██",
+                "    ██",
             ],
             '8': [
-                "█▀▀█",
-                "█  █",
-                "█▀▀█",
-                "█  █",
-                "█▄▄█",
+                " ████ ",
+                "██  ██",
+                "██  ██",
+                " ████ ",
+                "██  ██",
+                "██  ██",
+                " ████ ",
             ],
             '9': [
-                "█▀▀█",
-                "█  █",
-                "▀▀▀█",
-                "   █",
-                "▄▄▄█",
+                " ████ ",
+                "██  ██",
+                "██  ██",
+                " ████ ",
+                "    ██",
+                "    ██",
+                " ████ ",
             ],
             ':': [
-                "    ",
-                " ▀▀ ",
-                "    ",
-                " ▀▀ ",
-                "    ",
+                "  ",
+                "██",
+                "  ",
+                "  ",
+                "  ",
+                "██",
+                "  ",
             ],
         }
 
-        # Build each line of the big display
+        # Build each line of the LED display
         content = Text()
-        content.append("\n")
 
-        # Render 5 lines of the digital clock
-        for line_idx in range(5):
+        # Render 7 lines of the digital clock
+        for line_idx in range(7):
             line_parts = []
             for char in time_str:
                 if char in DIGITS:
                     line_parts.append(DIGITS[char][line_idx])
                 else:
-                    line_parts.append("    ")
+                    line_parts.append("      ")
 
             line = " ".join(line_parts)
-            content.append(f"  {line}\n", style=f"bold {color}")
+            content.append(f"    {line}\n", style=f"bold {color}")
 
-        content.append("\n")
         return content
 
     def create_display(self) -> Panel:
